@@ -510,7 +510,7 @@ class _RegscreenState extends State<Regscreen> {
                                       alignment: Alignment.center,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          primary:
+                                          backgroundColor:
                                               Color.fromRGBO(5, 183, 119, 1),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:

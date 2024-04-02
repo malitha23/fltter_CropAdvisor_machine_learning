@@ -1,19 +1,105 @@
+import 'package:agriculture/TfliteModel.dart';
 import 'package:agriculture/screens/loginpage.dart';
 import 'package:agriculture/screens/mainpage.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+// import 'package:background_fetch/background_fetch.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    // initBackgroundFetch();
+    // Fetch data initially
+    fetchData();
+    // Schedule periodic data fetch every 15 seconds
+    _timer = Timer.periodic(Duration(seconds: 15), (t) => fetchData());
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer when the widget is disposed
+    _timer.cancel();
+    super.dispose();
+  }
+
+  // Future<void> initBackgroundFetch() async {
+  //   await BackgroundFetch.configure(
+  //     BackgroundFetchConfig(
+  //       minimumFetchInterval: 15, // Minimum interval in minutes
+  //       stopOnTerminate: false,
+  //       enableHeadless: true,
+  //       requiresBatteryNotLow: false,
+  //       requiresCharging: false,
+  //       requiresStorageNotLow: false,
+  //       requiresDeviceIdle: false,
+  //     ),
+  //     (String taskId) async {
+  //       print('[BackgroundFetch] Headless event received.');
+  //       try {
+  //         final String urlData =
+  //             await fetchUrl(); // Call the function to fetch URL
+  //         print('URL data: $urlData');
+  //         BackgroundFetch.finish(taskId);
+  //       } catch (e) {
+  //         print('Error: $e');
+  //       }
+  //     },
+  //   );
+  // }
+
+  Future<void> fetchData() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://foodappbackend.jaffnamarriage.com/public/api/get-url'));
+      if (response.statusCode == 200) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        setState(() {
+          List<dynamic> dataList = jsonDecode(response.body);
+          if (dataList.isNotEmpty) {
+            String originalUrl = dataList[0]['url'].replaceAll(r'\/', '/');
+            prefs.setString('urlData', jsonEncode(originalUrl));
+          }
+        });
+      } else {
+        print('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: SplashScreen(),
     );
+  }
+}
+
+Future<String> fetchUrl() async {
+  final response = await http.get(Uri.parse(
+      'https://foodappbackend.jaffnamarriage.com/public/api/get-url'));
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('Failed to fetch URL');
   }
 }
 

@@ -726,11 +726,13 @@ class _datainputformadminState extends State<datainputformadmin> {
                 // Handle form submission
                 _handleSubmit();
               },
-              child: Text(isLoading ? 'Submitting...' : 'Submit'),
+              child: Text(
+                isLoading ? 'Submitting...' : 'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
               style: ElevatedButton.styleFrom(
-                primary:
+                backgroundColor:
                     const Color.fromRGBO(5, 183, 119, 1), // Background color
-                onPrimary: Colors.white, // Text color
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(10.0), // Adjust the value as needed

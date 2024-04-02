@@ -52,19 +52,22 @@ class _HomeScreenState extends State<HomeScreen> {
   File? _image;
 
   Future<void> _getImage() async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => UploadedImageScreen(),
-      ),
-    );
+    setState(() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UploadedImageScreen(),
+        ),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(top: 30.0) +
+            EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: FutureBuilder<Map<String, dynamic>>(
           future: _userDataFuture,
           builder: (context, snapshot) {

@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:agriculture/screens/DataInputForm%20.dart';
+import 'package:agriculture/screens/DataInputForm2.dart';
 import 'package:agriculture/screens/UploadedImageScreen.dart';
+import 'package:agriculture/screens/allDiseasepage.dart';
+import 'package:agriculture/screens/getCropsWithSimilarSoilType.dart';
+import 'package:agriculture/screens/weatherpage.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -65,32 +69,41 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(top: 30.0) +
-            EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-        child: FutureBuilder<Map<String, dynamic>>(
-          future: _userDataFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Show a loader while fetching data
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              // Show an error message if data fetching fails
-              return Center(child: Text('Error loading user data'));
-            } else {
-              // Data fetching successful
-              final userData = snapshot.data!;
-
-              // Determine the role and display content accordingly
-              if (userData['role'] == 'admin') {
-                return buildAdminContent(userData);
-              } else {
-                return buildUserContent(userData);
-              }
-            }
-          },
+      body: Stack(children: [
+        // Background image
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/pngtree-1610991.jpg', // Replace with your background image path
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
+        Padding(
+          padding: EdgeInsets.only(top: 30.0) +
+              EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+          child: FutureBuilder<Map<String, dynamic>>(
+            future: _userDataFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Show a loader while fetching data
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                // Show an error message if data fetching fails
+                return Center(child: Text('Error loading user data'));
+              } else {
+                // Data fetching successful
+                final userData = snapshot.data!;
+
+                // Determine the role and display content accordingly
+                if (userData['role'] == 'admin') {
+                  return buildAdminContent(userData);
+                } else {
+                  return buildUserContent(userData);
+                }
+              }
+            },
+          ),
+        ),
+      ]),
     );
   }
 
@@ -109,9 +122,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(
+          height: 8,
+        ),
         Text(
           'Hi ${userData['name']}!',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 75, 75, 75)),
         ),
         const SizedBox(height: 40),
         Expanded(
@@ -121,19 +140,58 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  buildContainer(
-                      'Crops', Icons.grass, Color.fromRGBO(5, 183, 119, 1)),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => getCropsWithSimilarSoilType(
+                            soilType: '',
+                          ), // Replace CropsScreen with the screen you want to navigate to
+                        ),
+                      );
+                    },
+                    child: buildContainer(
+                      'Crops',
+                      Icons.grass,
+                      Color.fromRGBO(5, 183, 119, 1),
+                    ),
+                  ),
                   SizedBox(width: 20),
-                  buildContainer(
-                      'Whether', Icons.cloud, Color.fromRGBO(5, 183, 119, 1)),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              WeatherCardPage(), // Replace CropsScreen with the screen you want to navigate to
+                        ),
+                      );
+                    },
+                    child: buildContainer(
+                        'Whether', Icons.cloud, Color.fromRGBO(5, 183, 119, 1)),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  buildContainer('Disease', Icons.medical_services_outlined,
-                      Color.fromRGBO(5, 183, 119, 1)),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              allDiseaseshowpage(), // Replace CropsScreen with the screen you want to navigate to
+                        ),
+                      );
+                    },
+                    child: buildContainer(
+                        'Disease',
+                        Icons.medical_services_outlined,
+                        Color.fromRGBO(5, 183, 119, 1)),
+                  ),
                 ],
               ),
               const SizedBox(height: 30),
@@ -258,7 +316,7 @@ class _datainputformmainState extends State<datainputformmain> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.0),
+      padding: EdgeInsets.symmetric(vertical: 1.0),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,7 +396,7 @@ class _datainputformmainState extends State<datainputformmain> {
             ),
             // Conditionally show Form1 or Form2 based on visibility
             if (isForm1Visible) datainputformadmin(),
-            if (isForm2Visible) Container(),
+            if (isForm2Visible) datainputform2(),
 
             const SizedBox(height: 20),
           ],

@@ -40,6 +40,7 @@ dependencies:
   persistent_bottom_nav_bar: any
   image_picker: ^0.8.9
   multi_select_flutter: ^4.0.0
+  geolocator: ^11.0.0
 
 
 

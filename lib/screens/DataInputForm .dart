@@ -32,13 +32,52 @@ class _datainputformadminState extends State<datainputformadmin> {
   String selectedTimeOption = "morning half";
 
   List<String> selectedDiseases = [];
+  final List<String> allDiseases = [];
 
-  final List<String> allDiseases = [
-    "Disease A",
-    "Disease B",
-    "Disease C",
-    // Add more diseases as needed
-  ];
+  void _setDisease() async {
+    final response = await http.post(
+      Uri.parse(
+          'https://foodappbackend.jaffnamarriage.com/public/api/diseasesgetall'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    // Check if the request was successful
+    if (response.statusCode == 200) {
+      // Parse the response JSON data
+      final responseData = json.decode(response.body);
+
+      // Handle the response data
+      if (response.statusCode == 200) {
+        // Disease retrieval successful
+        List<dynamic> diseasesData = responseData["diseases"];
+        List<String> diseases = [];
+
+        // Extract id and disease_name and format as strings
+        for (var diseaseData in diseasesData) {
+          int id = diseaseData['id'];
+          String name = diseaseData['disease_name'];
+          diseases.add("$id: $name");
+        }
+
+        setState(() {
+          allDiseases.clear(); // Clear the existing list before updating
+          allDiseases.addAll(diseases); // Add newly fetched diseases
+        });
+      } else {
+        // Failed to fetch diseases
+        print('Failed to get diseases: ${responseData['error']}');
+      }
+    } else {
+      // Handle error response
+      print('Failed to get data. Error: ${response.statusCode}');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _setDisease();
+  }
 
   final List<String> zones = ["dry", "wet", "intermediate"];
   final List<String> soilTypes = [
@@ -195,8 +234,9 @@ class _datainputformadminState extends State<datainputformadmin> {
     print(jsonData); // For debugging
 
     // Replace 'your_laravel_endpoint' with your actual Laravel endpoint
-    String endpoint = 'http://127.0.0.1:8000/api/cropsstore';
-
+    String endpoint =
+        'https://foodappbackend.jaffnamarriage.com/public/api/cropsstore';
+    //  https://foodappbackend.jaffnamarriage.com/public/api/
     // Make the HTTP POST request
     var response = await http.post(
       Uri.parse(endpoint),
@@ -431,7 +471,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                   ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: selectedZone,
               onChanged: (value) {
@@ -445,7 +485,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                   child: Text(zone),
                 );
               }).toList(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Zone',
                 // Customize the dropdown style
                 border: OutlineInputBorder(),
@@ -454,7 +494,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: selectedSoilType,
               onChanged: (value) {
@@ -468,7 +508,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                   child: Text(soilType),
                 );
               }).toList(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Soil Type',
                 // Customize the dropdown style
                 border: OutlineInputBorder(),
@@ -491,7 +531,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                   child: Text(season),
                 );
               }).toList(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Seasons',
                 // Customize the dropdown style
                 border: OutlineInputBorder(),
@@ -518,7 +558,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                   child: Text(cycle),
                 );
               }).toList(),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Watering Cycle',
                 // Customize the dropdown style
                 border: OutlineInputBorder(),
@@ -542,7 +582,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                     child: Text(option),
                   );
                 }).toList(),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Select Days',
                   // Customize the dropdown style
                   border: OutlineInputBorder(),
@@ -551,6 +591,9 @@ class _datainputformadminState extends State<datainputformadmin> {
                   ),
                 ),
               ),
+            SizedBox(
+              height: 15,
+            ),
             if (selectedCycle == "weekly")
               DropdownButtonFormField<String>(
                 value: selectedTimeOption,
@@ -601,6 +644,7 @@ class _datainputformadminState extends State<datainputformadmin> {
                 ),
               ),
             SizedBox(height: 20),
+            Text('Select Diseases'),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),

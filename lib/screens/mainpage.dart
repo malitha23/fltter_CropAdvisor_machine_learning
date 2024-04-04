@@ -30,14 +30,14 @@ class _MainpageState extends State<Mainpage> {
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.home),
           title: "Home",
-          activeColorPrimary: Color.fromRGBO(5, 183, 119, 1),
-          inactiveColorPrimary: Colors.grey,
+          activeColorPrimary: Colors.white,
+          inactiveColorPrimary: Colors.white,
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.person),
           title: "Profile",
-          activeColorPrimary: Color.fromRGBO(5, 183, 119, 1),
-          inactiveColorPrimary: Colors.grey,
+          activeColorPrimary: Colors.white,
+          inactiveColorPrimary: Colors.white,
         ),
       ];
 
@@ -49,8 +49,7 @@ class _MainpageState extends State<Mainpage> {
         controller: _controller,
         screens: _buildScreens(),
         items: _navBarsItems(),
-        // Other properties remain the same
-        // Add necessary properties such as backgroundColor, decoration, etc.
+        backgroundColor: Color.fromRGBO(5, 183, 119, 1),
       ),
     );
   }

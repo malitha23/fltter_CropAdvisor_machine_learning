@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:agriculture/screens/getCropsWithSimilarSoilType.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -67,8 +68,8 @@ class _UploadedImageScreenState extends State<UploadedImageScreen> {
         // Handle successful response
         print('Image uploaded successfully');
         print('Response body: ${response.body}');
-        jsonResponse = json.decode(response.body);
         setState(() {
+          jsonResponse = json.decode(response.body);
           loaderimageresponse = false;
           _image = imagepath;
         });
@@ -136,6 +137,17 @@ class _UploadedImageScreenState extends State<UploadedImageScreen> {
                     ),
                   ],
                 ),
+          // ElevatedButton(
+          //   onPressed: () async {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //           builder: (context) => getCropsWithSimilarSoilType(
+          //               soilType: predictedClass.toString())),
+          //     );
+          //   },
+          //   child: Text('Find the crops'),
+          // ),
           SizedBox(height: 16),
           !loaderimageresponse
               ? Column(
@@ -195,7 +207,17 @@ class _UploadedImageScreenState extends State<UploadedImageScreen> {
                                         SizedBox(
                                             child: _image != null
                                                 ? ElevatedButton(
-                                                    onPressed: () async {},
+                                                    onPressed: () async {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                getCropsWithSimilarSoilType(
+                                                                    soilType:
+                                                                        predictedClass
+                                                                            .toString())),
+                                                      );
+                                                    },
                                                     child:
                                                         Text('Find the crops'),
                                                   )

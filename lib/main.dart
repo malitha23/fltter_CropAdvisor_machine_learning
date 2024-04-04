@@ -115,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // Trigger the fading-in effect after a delay
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         opacity = 1.0;
       });
@@ -142,29 +142,45 @@ class _SplashScreenState extends State<SplashScreen> {
     return MaterialApp(
       home: Scaffold(
         body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          color: const Color.fromRGBO(5, 183, 119, 1),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedOpacity(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Stack(children: [
+              // Background image
+              Positioned.fill(
+                child: AnimatedOpacity(
                     duration: const Duration(seconds: 1),
                     opacity: opacity,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(
-                          70.0), // Set the border radius as needed
+                          0.0), // Set the border radius as needed
                       child: Image.asset(
-                        'assets/images/splashAgri.png',
-                        width: 200,
+                        'assets/images/Farmer.png', // Replace with your background image path
+                        fit: BoxFit.cover,
                       ),
                     )),
-              ],
-            ),
-          ),
-        ),
+              ),
+            ])),
       ),
     );
   }
 }
+
+// Center(
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 AnimatedOpacity(
+//                     duration: const Duration(seconds: 1),
+//                     opacity: opacity,
+//                     child: ClipRRect(
+//                       borderRadius: BorderRadius.circular(
+//                           70.0), // Set the border radius as needed
+//                       child: Image.asset(
+//                         'assets/images/splashAgri.png',
+//                         width: 200,
+//                       ),
+//                     )),
+//               ],
+//             ),
+//           ),
+        

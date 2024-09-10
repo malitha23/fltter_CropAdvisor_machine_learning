@@ -66,8 +66,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse(
-          'https://foodappbackend.jaffnamarriage.com/public/api/get-url'));
+      final response =
+          await http.get(Uri.parse('http://10.0.2.2:8000/api/get-url'));
       if (response.statusCode == 200) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         setState(() {
@@ -94,8 +94,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 Future<String> fetchUrl() async {
-  final response = await http.get(Uri.parse(
-      'https://foodappbackend.jaffnamarriage.com/public/api/get-url'));
+  final response = await http.get(Uri.parse('http://10.0.2.2/api/get-url'));
   if (response.statusCode == 200) {
     return response.body;
   } else {

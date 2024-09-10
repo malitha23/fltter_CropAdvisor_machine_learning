@@ -1,7 +1,7 @@
 import 'package:agriculture/screens/HomeScreen.dart';
 import 'package:agriculture/screens/ProfileScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class AdminMainpage extends StatefulWidget {
   final String tokenVal;

@@ -36,8 +36,7 @@ class _datainputformadminState extends State<datainputformadmin> {
 
   void _setDisease() async {
     final response = await http.post(
-      Uri.parse(
-          'https://foodappbackend.jaffnamarriage.com/public/api/diseasesgetall'),
+      Uri.parse('http://10.0.2.2:8000/api/diseasesgetall'),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -234,9 +233,8 @@ class _datainputformadminState extends State<datainputformadmin> {
     print(jsonData); // For debugging
 
     // Replace 'your_laravel_endpoint' with your actual Laravel endpoint
-    String endpoint =
-        'https://foodappbackend.jaffnamarriage.com/public/api/cropsstore';
-    //  https://foodappbackend.jaffnamarriage.com/public/api/
+    String endpoint = 'http://10.0.2.2:8000/api/cropsstore';
+    //  http://10.0.2.2:8000/api/
     // Make the HTTP POST request
     var response = await http.post(
       Uri.parse(endpoint),

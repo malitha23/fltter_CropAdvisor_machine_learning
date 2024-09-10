@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class WeatherCardPage extends StatefulWidget {
   const WeatherCardPage({Key? key});
@@ -97,7 +98,10 @@ class _WeatherCardPageState extends State<WeatherCardPage> {
             weatherIcon: _weather.weatherIcon ?? '',
           )
         : Center(
-            child: CircularProgressIndicator(),
+            child: LoadingAnimationWidget.stretchedDots(
+              color: Color.fromRGBO(5, 183, 119, 1),
+              size: 40,
+            ),
           );
   }
 }
@@ -200,13 +204,19 @@ class WeatherCard extends StatelessWidget {
                               return child;
                             } else {
                               // Show a placeholder while loading
-                              return CircularProgressIndicator();
+                              return LoadingAnimationWidget.stretchedDots(
+                                color: Color.fromRGBO(5, 183, 119, 1),
+                                size: 40,
+                              );
                             }
                           },
                           errorBuilder: (BuildContext context, Object exception,
                               StackTrace? stackTrace) {
                             // Show an error message if the image fails to load
-                            return CircularProgressIndicator();
+                            return LoadingAnimationWidget.stretchedDots(
+                              color: Color.fromRGBO(5, 183, 119, 1),
+                              size: 40,
+                            );
                           },
                         ),
                         Text(

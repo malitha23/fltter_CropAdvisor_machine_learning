@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class UploadedImageScreen extends StatefulWidget {
   const UploadedImageScreen({Key? key}) : super(key: key);
@@ -41,59 +42,44 @@ class _UploadedImageScreenState extends State<UploadedImageScreen> {
     }
   }
 
-  Future<void> _postImage(String base64Image, String imagepath) async {
+  Future<void> _postImage(String base64Image, String imagePath) async {
     setState(() {
       loaderimageresponse = true;
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? url = prefs.getString('urlData');
-    String cleanUrl = url!.replaceAll('"', '');
-    // Define the complete API endpoint by appending '/getresponse' to the provided URL
-    final String apiUrl = cleanUrl + '/getresponse';
 
+    const String apiUrl = 'https://python.lovebird4u.com/getresponse';
+    print(base64Image);
     try {
-      // Make a POST request to the API endpoint
       final response = await http.post(
         Uri.parse(apiUrl),
-        body: jsonEncode({"image": base64Image}), // Encode the image as JSON
+        body: jsonEncode({"image": base64Image}),
         headers: {
-          'Content-Type': 'application/json', // Set content-type header
-          // Add any other headers if needed
+          'Content-Type': 'application/json',
         },
       );
-
-      // Check if the request was successful
+      print(response.body);
       if (response.statusCode == 200) {
         successcode = response.statusCode;
-        // Handle successful response
         print('Image uploaded successfully');
-        print('Response body: ${response.body}');
         setState(() {
           jsonResponse = json.decode(response.body);
           loaderimageresponse = false;
-          _image = imagepath;
+          _image = imagePath;
         });
-        // You might want to parse and process the response here
-      } else if (response.statusCode == 404) {
-        setState(() {
-          loaderimageresponse = false;
-          successcode = response.statusCode;
-        });
-        // Handle error response
       } else {
         print('Failed to upload image: ${response.statusCode}');
+        print('Response body: ${response.body}');
         setState(() {
           loaderimageresponse = false;
           successcode = response.statusCode;
         });
-        //
       }
     } catch (e) {
       setState(() {
+        loaderimageresponse = false;
         successcode = 100;
       });
-
-      // Handle exceptions
       print('Error uploading image: $e');
     }
   }
@@ -117,7 +103,10 @@ class _UploadedImageScreenState extends State<UploadedImageScreen> {
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: CircularProgressIndicator(), // Display loader
+                    child: LoadingAnimationWidget.stretchedDots(
+                      color: Color.fromRGBO(5, 183, 119, 1),
+                      size: 40,
+                    ), // Display loader
                   ),
                 )
               : Row(

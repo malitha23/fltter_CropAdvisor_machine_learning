@@ -1,7 +1,8 @@
 import 'package:agriculture/screens/HomeScreen.dart';
 import 'package:agriculture/screens/ProfileScreen.dart';
+import 'package:agriculture/screens/FavoritesScreen.dart'; // Import the new page
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class Mainpage extends StatefulWidget {
   final String tokenVal;
@@ -23,6 +24,7 @@ class _MainpageState extends State<Mainpage> {
 
   List<Widget> _buildScreens() => [
         HomeScreen(tokenVal: widget.tokenVal),
+        FavoritesScreen(tokenVal: widget.tokenVal), // Add FavoritesScreen here
         ProfileScreen(tokenVal: widget.tokenVal),
       ];
 
@@ -34,11 +36,17 @@ class _MainpageState extends State<Mainpage> {
           inactiveColorPrimary: Colors.white,
         ),
         PersistentBottomNavBarItem(
+          icon: const Icon(Icons.favorite),
+          title: "Favorites",
+          activeColorPrimary: Colors.white,
+          inactiveColorPrimary: Colors.white,
+        ),
+        PersistentBottomNavBarItem(
           icon: const Icon(Icons.person),
           title: "Profile",
           activeColorPrimary: Colors.white,
           inactiveColorPrimary: Colors.white,
-        ),
+        )
       ];
 
   @override

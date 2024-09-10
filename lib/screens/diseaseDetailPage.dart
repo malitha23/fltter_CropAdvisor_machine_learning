@@ -3,6 +3,7 @@ import 'package:agriculture/screens/fullScreenImage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class DiseaseDetailPage extends StatefulWidget {
   final String diseaseiD;
@@ -39,7 +40,10 @@ class _DiseaseDetailPageState extends State<DiseaseDetailPage> {
           builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting ||
                 snapshot.data == null) {
-              return CircularProgressIndicator();
+              return LoadingAnimationWidget.stretchedDots(
+                color: Color.fromRGBO(5, 183, 119, 1),
+                size: 40,
+              );
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
@@ -148,8 +152,8 @@ class _DiseaseDetailPageState extends State<DiseaseDetailPage> {
   }
 
   Future<Map<String, dynamic>> fetchDiseaseDetails(String id) async {
-    final response = await http.post(Uri.parse(
-        'https://foodappbackend.jaffnamarriage.com/public/api/diseasesgetiD?id=$id'));
+    final response = await http
+        .post(Uri.parse('http://10.0.2.2:8000/api/diseasesgetiD?id=$id'));
     if (response.statusCode == 200) {
       Map<String, dynamic> responseData = json.decode(response.body);
       List<dynamic> diseases = responseData['diseases'];

@@ -93,7 +93,7 @@ class _RegscreenState extends State<Regscreen> {
       return;
     }
 
-    // check matching passwords
+    // Validate if passwords match
     if (password != repassword) {
       showDialog(
         context: context,
@@ -116,11 +116,10 @@ class _RegscreenState extends State<Regscreen> {
     }
 
     setState(() {
-      isLoading = true; // Set the state to indicate loading
+      isLoading = true; // Set loading state
     });
-    // API endpoint for login
-    var apiUrl = Uri.parse(
-        'https://foodappbackend.jaffnamarriage.com/public/api/register');
+
+    var apiUrl = Uri.parse('http://10.0.2.2:8000/api/register');
 
     // Data to be sent in the request body
     var data = {
@@ -128,35 +127,44 @@ class _RegscreenState extends State<Regscreen> {
       'email': email,
       'password': password,
     };
+
     try {
       var response = await http.post(apiUrl, body: data);
-      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         setState(() {
           isLoading = false;
         });
 
-        var token = jsonResponse['token'];
+        // Use rawToken or token from JSON
+        var token = jsonResponse['token'] ?? '';
 
-        // Check if it's not web before using shared_preferences
+        // Store the token using SharedPreferences (if not on web)
         if (!kIsWeb) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
         }
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Mainpage(tokenVal: token)));
+
+        // Navigate to the main page with the token
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Mainpage(tokenVal: token)),
+        );
       } else {
-        // This block should handle other HTTP status codes
-        print('Register Failed: ${response.statusCode}');
+        // Handle non-success HTTP responses
         setState(() {
           isLoading = false;
         });
+
+        String errorMessage =
+            jsonResponse['message'] ?? 'Unknown error occurred.';
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Register Failed'),
-              content: Text(jsonResponse['message']),
+              content: Text(errorMessage),
               actions: [
                 TextButton(
                   onPressed: () {

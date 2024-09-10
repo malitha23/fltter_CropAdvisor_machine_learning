@@ -2,6 +2,7 @@ import 'package:agriculture/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String tokenVal;
@@ -25,8 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> getUserData() async {
     try {
       final response = await http.get(
-        Uri.parse(
-            'https://foodappbackend.jaffnamarriage.com/public/api/user-data'),
+        Uri.parse('http://10.0.2.2:8000/api/user-data'),
         headers: {'Authorization': 'Bearer ${widget.tokenVal}'},
       );
 
@@ -57,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 100,
                     // Use the user's profile image URL from userData
                     // For example: NetworkImage(userData['profile_image']),
@@ -76,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           .pushAndRemoveUntil(
                         MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return const MyApp();
+                            return MyApp();
                           },
                         ),
                         (_) => false,
@@ -87,7 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Add more user-related information as needed
                 ],
               )
-            : CircularProgressIndicator(), // Show a loading indicator while fetching data
+            : LoadingAnimationWidget.stretchedDots(
+                color: Color.fromRGBO(5, 183, 119, 1),
+                size: 40,
+              ), // Show a loading indicator while fetching data
       ),
     );
   }

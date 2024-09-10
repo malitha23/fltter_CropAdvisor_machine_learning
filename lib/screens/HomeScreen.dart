@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   final String tokenVal;
@@ -33,8 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<Map<String, dynamic>> getUserData() async {
     try {
       final response = await http.get(
-        Uri.parse(
-            'https://foodappbackend.jaffnamarriage.com/public/api/user-data'),
+        Uri.parse('http://10.0.2.2:8000/api/user-data'),
         headers: {'Authorization': 'Bearer ${widget.tokenVal}'},
       );
 
@@ -78,17 +78,45 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: 30.0) +
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+          padding: const EdgeInsets.only(top: 30.0) +
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
           child: FutureBuilder<Map<String, dynamic>>(
             future: _userDataFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // Show a loader while fetching data
-                return Center(child: CircularProgressIndicator());
+                return Center(
+                    child: LoadingAnimationWidget.stretchedDots(
+                  color: Color.fromRGBO(5, 183, 119, 1),
+                  size: 40,
+                ));
               } else if (snapshot.hasError) {
                 // Show an error message if data fetching fails
-                return Center(child: Text('Error loading user data'));
+                return Center(
+                    child: Column(
+                  children: [
+                    const Text('Error loading user data'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _userDataFuture;
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20), // Set left and right padding
+                        backgroundColor: const Color.fromRGBO(
+                            5, 183, 119, 1), // Set background color
+                      ),
+                      child: const Text(
+                        'Reload',
+                        style: TextStyle(
+                            color: Colors.white), // Set text color to white
+                      ),
+                    ),
+                  ],
+                ));
               } else {
                 // Data fetching successful
                 final userData = snapshot.data!;

@@ -4,6 +4,7 @@ import 'package:agriculture/screens/fullScreenImage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class allDiseaseshowpage extends StatefulWidget {
   @override
@@ -20,42 +21,81 @@ class _allDiseaseshowpageState extends State<allDiseaseshowpage> {
     loadDiseases(); // Load diseases when the page initializes
   }
 
-  // Method to load diseases
   Future<void> loadDiseases() async {
     setState(() {
       isLoading = true; // Set isLoading to true when fetching starts
     });
+
     try {
-      // Sample JSON response
       final response = await http.post(
-        Uri.parse(
-            'https://foodappbackend.jaffnamarriage.com/public/api/diseasesgetall'),
+        Uri.parse('http://10.0.2.2:8000/api/diseasesgetall'),
         headers: {'Content-Type': 'application/json'},
       );
 
-      // Check if the request was successful
-      if (response.statusCode == 200) {
-        // Parse the response JSON data
-        final responseData = json.decode(response.body);
+      print('Response body: ${response.body}');
 
-        // Handle the response data
-        List<dynamic> parsedJson = responseData['diseases'];
+      if (response.statusCode == 200) {
+        try {
+          final responseData = json.decode(response.body);
+
+          if (responseData != null && responseData['diseases'] != null) {
+            List<dynamic> parsedJson = responseData['diseases'];
+
+            // Validate and decode base64 image paths
+            parsedJson = parsedJson.map((json) {
+              if (json['image_paths'] != null) {
+                json['image_paths'] = json['image_paths'].map((path) {
+                  if (path is String) {
+                    // Clean base64 string if necessary
+                    path = path.replaceAll(RegExp(r'\s+'), '');
+                    try {
+                      // Validate base64 string length
+                      if (path.length % 4 != 0) {
+                        path = path.padRight(
+                            path.length + (4 - path.length % 4), '=');
+                      }
+                      // Optionally, decode base64 data to check validity
+                      base64.decode(path);
+                    } catch (e) {
+                      print('Base64 decoding error: $e');
+                      // Handle the error (e.g., set a placeholder image)
+                      path = ''; // Or set to a placeholder URL
+                    }
+                  }
+                  return path;
+                }).toList();
+              }
+              return json;
+            }).toList();
+
+            setState(() {
+              diseases =
+                  parsedJson.map((json) => Disease.fromJson(json)).toList();
+              isLoading = false;
+            });
+          } else {
+            print('Error: Response data does not contain "diseases"');
+            setState(() {
+              isLoading = false;
+            });
+          }
+        } catch (jsonError) {
+          print('JSON decoding error: $jsonError');
+          setState(() {
+            isLoading = false;
+          });
+        }
+      } else {
+        print('Failed to get diseases: ${response.statusCode}');
         setState(() {
-          diseases = parsedJson.map((json) => Disease.fromJson(json)).toList();
           isLoading = false;
         });
-      } else {
-        setState(() {
-          isLoading = false; // Set isLoading to false on error
-        });
-        // Failed to fetch diseases
-        print('Failed to get diseases: ${response.statusCode}');
       }
     } catch (error) {
-      setState(() {
-        isLoading = false; // Set isLoading to false on error
-      });
       print('Error loading diseases: $error');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -66,7 +106,11 @@ class _allDiseaseshowpageState extends State<allDiseaseshowpage> {
         title: Text('Disease Cards'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: LoadingAnimationWidget.stretchedDots(
+              color: Color.fromRGBO(5, 183, 119, 1),
+              size: 40,
+            ))
           : ListView.builder(
               itemCount: diseases.length,
               itemBuilder: (context, index) {

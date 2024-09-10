@@ -53,8 +53,7 @@ class _datainputform2State extends State<datainputform2> {
 
     // Make the POST request
     final response = await http.post(
-      Uri.parse(
-          'https://foodappbackend.jaffnamarriage.com/public/api/storedisease'),
+      Uri.parse('http://10.0.2.2:8000/api/storedisease'),
       body: json.encode(requestBody),
       headers: {'Content-Type': 'application/json'},
     );

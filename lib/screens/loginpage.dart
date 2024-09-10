@@ -78,8 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true; // Set the state to indicate loading
     });
 
-    var apiUrl =
-        Uri.parse('https://foodappbackend.jaffnamarriage.com/public/api/login');
+    var apiUrl = Uri.parse('http://10.0.2.2:8000/api/login');
 
     // Data to be sent in the request body
     var data = {
@@ -89,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       var response = await http.post(apiUrl, body: data);
+      print(response.body);
       Map<String, dynamic> jsonResponse = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {

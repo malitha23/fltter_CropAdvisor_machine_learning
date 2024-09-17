@@ -48,7 +48,7 @@ class _UploadedImageScreenState extends State<UploadedImageScreen> {
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    const String apiUrl = 'https://python.lovebird4u.com/getresponse';
+    const String apiUrl = 'http://10.0.2.2:5000/getresponse';
     print(base64Image);
     try {
       final response = await http.post(
